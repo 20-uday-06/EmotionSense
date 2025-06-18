@@ -1,17 +1,49 @@
 import streamlit as st
 import numpy as np
-import librosa
-import librosa.display
-import joblib
-import tensorflow as tf
-from tensorflow.keras.models import load_model
 import tempfile
 import os
-import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use('Agg')  # Use non-interactive backend
-from sklearn.preprocessing import StandardScaler, LabelEncoder
 import time
+import warnings
+warnings.filterwarnings('ignore')
+
+# Essential imports with error handling
+try:
+    import librosa
+    import librosa.display
+    LIBROSA_AVAILABLE = True
+except ImportError:
+    LIBROSA_AVAILABLE = False
+    st.error("Librosa not available. Audio processing will be limited.")
+
+try:
+    import joblib
+    JOBLIB_AVAILABLE = True
+except ImportError:
+    JOBLIB_AVAILABLE = False
+    st.error("Joblib not available. Model loading will be limited.")
+
+try:
+    import tensorflow as tf
+    from tensorflow.keras.models import load_model
+    TENSORFLOW_AVAILABLE = True
+except ImportError:
+    TENSORFLOW_AVAILABLE = False
+    st.error("TensorFlow not available. Model inference will be limited.")
+
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib
+    matplotlib.use('Agg')  # Use non-interactive backend
+    MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    MATPLOTLIB_AVAILABLE = False
+
+try:
+    from sklearn.preprocessing import StandardScaler, LabelEncoder
+    SKLEARN_AVAILABLE = True
+except ImportError:
+    SKLEARN_AVAILABLE = False
+
 try:
     from streamlit_audiorecorder import audiorecorder
     AUDIO_RECORDER_AVAILABLE = True

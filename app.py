@@ -366,12 +366,8 @@ def main():
             <h3 style='color: #6366f1; margin-bottom: 1rem;'>🎵 Audio Input</h3>
             <p style='color: #94a3b8; margin-bottom: 0;'>Select your preferred input method below</p>
         </div>
-        """, unsafe_allow_html=True)
-          # Input method tabs - Upload is primary method for deployment
-        if AUDIO_RECORDER_AVAILABLE:
-            input_tab1, input_tab2 = st.tabs(["📁 Upload Audio File", "🎤 Live Recording"])
-        else:
-            input_tab1, input_tab2 = st.tabs(["📁 Upload Audio File", "🎤 Live Recording (Unavailable)"])
+        """, unsafe_allow_html=True)        # Input method tabs - both methods work universally
+        input_tab1, input_tab2 = st.tabs(["📁 Upload Audio File", "🎤 Live Recording"])
         
         audio_data = None
         input_method = None
@@ -412,72 +408,121 @@ def main():
                 st.success("✅ File uploaded successfully! Ready for analysis.")
         
         with input_tab2:
-            if AUDIO_RECORDER_AVAILABLE:
-                st.markdown("""
-                <div class="record-zone">
-                    <h4 style='color: #ec4899; margin-bottom: 1rem;'>🎤 Live Recording</h4>
-                    <p style='color: #94a3b8;'>Click the button below to start recording your voice</p>
-                    <p style='color: #64748b; font-size: 0.9rem;'>Optimal duration: 3-10 seconds for best results</p>
+            st.markdown("""
+            <div class="record-zone">
+                <h4 style='color: #ec4899; margin-bottom: 1rem;'>🎤 Live Recording</h4>
+                <p style='color: #94a3b8;'>Record directly in your browser</p>
+                <p style='color: #64748b; font-size: 0.9rem;'>Optimal duration: 3-10 seconds for best results</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Browser-based audio recording using HTML5
+            st.markdown("""
+            <div style='text-align: center; margin: 2rem 0;'>
+                <button id="recordBtn" onclick="toggleRecording()" style='
+                    background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%);
+                    border: none;
+                    border-radius: 12px;
+                    padding: 15px 30px;
+                    color: white;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    box-shadow: 0 4px 20px rgba(236, 72, 153, 0.3);
+                    transition: all 0.3s ease;
+                    margin: 10px;
+                '>🔴 Start Recording</button>
+                
+                <div id="recordingStatus" style='margin: 1rem 0; color: #94a3b8;'></div>
+                <audio id="audioPlayback" controls style='margin: 1rem 0; display: none; width: 100%;'></audio>
+                <div id="downloadSection" style='margin: 1rem 0; display: none;'>
+                    <a id="downloadLink" style='
+                        background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+                        border: none;
+                        border-radius: 12px;
+                        padding: 12px 24px;
+                        color: white;
+                        text-decoration: none;
+                        font-weight: 600;
+                        display: inline-block;
+                        margin: 10px;
+                    '>💾 Download Recording</a>
                 </div>
-                """, unsafe_allow_html=True)
+            </div>
+            
+            <script>
+            let mediaRecorder;
+            let audioChunks = [];
+            let isRecording = false;
+            
+            async function toggleRecording() {
+                const recordBtn = document.getElementById('recordBtn');
+                const status = document.getElementById('recordingStatus');
+                const audioPlayback = document.getElementById('audioPlayback');
+                const downloadSection = document.getElementById('downloadSection');
                 
-                # Recording interface
-                col_rec1, col_rec2, col_rec3 = st.columns([1, 2, 1])
-                
-                with col_rec2:
-                    recorded_audio = audiorecorder(
-                        start_prompt="🔴 Start Recording",
-                        stop_prompt="⏹️ Stop Recording",
-                        pause_prompt="⏸️ Pause Recording",
-                        show_visualizer=True,
-                        key="emotion_audio_recorder"
-                    )
-                
-                if len(recorded_audio) > 0:
-                    input_method = "Record Audio"
-                    # Convert to bytes for consistent handling
-                    audio_data = recorded_audio.export().read()
-                    
-                    # Recording info
-                    duration = len(recorded_audio) / recorded_audio.frame_rate
-                    sample_rate = recorded_audio.frame_rate
-                    
-                    col_rec_info1, col_rec_info2, col_rec_info3 = st.columns(3)
-                    with col_rec_info1:
-                        st.metric("⏱️ Duration", f"{duration:.2f}s")
-                    with col_rec_info2:
-                        st.metric("🔊 Sample Rate", f"{sample_rate} Hz")
-                    with col_rec_info3:
-                        st.metric("🎵 Channels", "Mono")
-                    
-                    # Audio player
-                    st.markdown("#### 🔊 Recording Playback")
-                    st.audio(audio_data, format="audio/wav")
-                    
-                    # Download option
-                    st.download_button(
-                        label="💾 Download Recording",
-                        data=audio_data,
-                        file_name=f"emotion_recording_{int(time.time())}.wav",
-                        mime="audio/wav",
-                        use_container_width=True
-                    )
-                    
-                    st.success("✅ Recording completed! Ready for analysis.")
-            else:
-                st.markdown("""
-                <div class="section-card" style="text-align: center; padding: 3rem; border: 2px dashed #64748b;">
-                    <h4 style='color: #f59e0b; margin-bottom: 1rem;'>🎤 Live Recording</h4>
-                    <p style='color: #94a3b8; margin-bottom: 1.5rem;'>Live recording is not available in this deployment environment</p>
-                    <div style='background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1rem 0; border: 1px solid rgba(245, 158, 11, 0.3);'>
-                        <h5 style='color: #f59e0b; margin-bottom: 1rem;'>💡 Alternative Options:</h5>
-                        <p style='color: #94a3b8; margin-bottom: 0.5rem;'>• Use the <strong>Upload Audio File</strong> tab above</p>
-                        <p style='color: #94a3b8; margin-bottom: 0.5rem;'>• Record audio on your device and upload the file</p>
-                        <p style='color: #94a3b8; margin-bottom: 0;'>• Supported formats: WAV, MP3, M4A</p>
-                    </div>
-                    <p style='color: #64748b; font-size: 0.9rem; margin-top: 1rem;'>For local development with recording capabilities, install: <code style='background: rgba(15, 23, 42, 0.8); padding: 0.2rem 0.5rem; border-radius: 4px;'>pip install streamlit-audiorecorder</code></p>
-                </div>
-                """, unsafe_allow_html=True)
+                if (!isRecording) {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+                        
+                        mediaRecorder.ondataavailable = event => {
+                            audioChunks.push(event.data);
+                        };
+                        
+                        mediaRecorder.onstop = () => {
+                            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                            const audioUrl = URL.createObjectURL(audioBlob);
+                            
+                            audioPlayback.src = audioUrl;
+                            audioPlayback.style.display = 'block';
+                            
+                            const downloadLink = document.getElementById('downloadLink');
+                            downloadLink.href = audioUrl;
+                            downloadLink.download = 'emotion_recording_' + Date.now() + '.wav';
+                            downloadSection.style.display = 'block';
+                            
+                            status.innerHTML = '✅ Recording completed! Use the download button to save your recording.';
+                            
+                            // Stop all tracks
+                            stream.getTracks().forEach(track => track.stop());
+                        };
+                        
+                        mediaRecorder.start();
+                        isRecording = true;
+                        recordBtn.innerHTML = '⏹️ Stop Recording';
+                        recordBtn.style.background = 'linear-gradient(90deg, #ef4444 0%, #f87171 100%)';
+                        status.innerHTML = '🔴 Recording... Click stop when finished.';
+                        
+                    } catch (error) {
+                        status.innerHTML = '❌ Microphone access denied. Please allow microphone access and try again.';
+                        console.error('Error accessing microphone:', error);
+                    }
+                } else {
+                    mediaRecorder.stop();
+                    isRecording = false;
+                    recordBtn.innerHTML = '🔴 Start Recording';
+                    recordBtn.style.background = 'linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%)';
+                    status.innerHTML = '⏸️ Processing recording...';
+                }
+            }
+            </script>
+            """, unsafe_allow_html=True)
+            
+            # Instructions for using the recording
+            st.markdown("""
+            <div style='background: rgba(99, 102, 241, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1rem 0; border: 1px solid rgba(99, 102, 241, 0.3);'>
+                <h5 style='color: #6366f1; margin-bottom: 1rem;'>� How to use your recording:</h5>
+                <ol style='color: #94a3b8; margin-left: 1rem;'>
+                    <li>Click "Start Recording" and allow microphone access</li>
+                    <li>Speak clearly for 3-10 seconds</li>
+                    <li>Click "Stop Recording" when finished</li>
+                    <li>Download the recording file</li>
+                    <li>Go to "Upload Audio File" tab and upload your recording</li>
+                </ol>
+            </div>
+            """, unsafe_allow_html=True)
         
         # Analysis Section
         if audio_data:

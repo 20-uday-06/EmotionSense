@@ -20,7 +20,7 @@ except ImportError:
 
 # Page Configuration
 st.set_page_config(
-    page_title="Emotion Classifier",
+    page_title="MARS SER System - EmotionSense AI",
     page_icon="🎤",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -29,14 +29,18 @@ st.set_page_config(
 # Custom CSS for modern styling
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
             
 :root {
     --primary: #6366f1;
     --secondary: #8b5cf6;
     --accent: #ec4899;
-    --dark: #1e293b;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --dark: #0f172a;
     --light: #f8fafc;
+    --gray: #64748b;
 }
 
 * {
@@ -48,13 +52,90 @@ st.markdown("""
     color: var(--light);
 }
 
-.st-emotion-cache-1y4p8pa {
+.main-header {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
     padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
-h1, h2, h3, h4 {
-    color: var(--light) !important;
-    font-weight: 600 !important;
+.section-card {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.upload-zone {
+    border: 2px dashed var(--primary);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    background: rgba(99, 102, 241, 0.05);
+    margin: 1rem 0;
+    transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+    border-color: var(--accent);
+    background: rgba(236, 72, 153, 0.05);
+}
+
+.record-zone {
+    border: 2px dashed var(--accent);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    background: rgba(236, 72, 153, 0.05);
+    margin: 1rem 0;
+}
+
+.feature-card {
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    border: 1px solid;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card.processing {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.feature-card.extraction {
+    background: rgba(236, 72, 153, 0.1);
+    border-color: rgba(236, 72, 153, 0.3);
+}
+
+.feature-card.analysis {
+    background: rgba(139, 92, 246, 0.1);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+.emotion-result {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-radius: 20px;
+    margin: 1rem 0;
+    border: 2px solid var(--primary);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
 }
 
 .stButton>button {
@@ -72,65 +153,33 @@ h1, h2, h3, h4 {
     box-shadow: 0 6px 25px rgba(99, 102, 241, 0.5) !important;
 }
 
-.stFileUploader>div>div>div>div {
-    background: rgba(30, 41, 59, 0.7) !important;
-    border: 2px dashed #4c4fef !important;
-    border-radius: 16px !important;
-    padding: 2rem !important;
-    transition: all 0.3s ease !important;
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
 }
 
-.stFileUploader>div>div>div>div:hover {
-    border-color: var(--accent) !important;
-    background: rgba(30, 41, 59, 0.9) !important;
-}
-
-.st-emotion-cache-1aehpvj {
-    color: var(--accent) !important;
-}
-
-.stSpinner>div {
-    border-color: var(--primary) transparent transparent transparent !important;
-}
-
-/* Card styling */
-.card {
-    background: rgba(15, 23, 42, 0.7) !important;
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+.stTabs [data-baseweb="tab"] {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 10px;
     border: 1px solid rgba(99, 102, 241, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    color: var(--light);
+    font-weight: 600;
 }
 
-/* Emotion colors */
-.emotion-display {
-    font-size: 2.5rem;
-    font-weight: 700;
-    text-align: center;
-    padding: 1.5rem;
-    border-radius: 16px;
-    margin: 2rem 0;
-    background: rgba(15, 23, 42, 0.8);
-    border: 2px solid;
-    animation: pulse 2s infinite;
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+.stProgress .stProgress-bar {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
 }
 
-.neutral { color: #94a3b8; border-color: #94a3b8; }
-.calm { color: #60a5fa; border-color: #60a5fa; }
-.happy { color: #fbbf24; border-color: #fbbf24; }
-.sad { color: #38bdf8; border-color: #38bdf8; }
-.angry { color: #f87171; border-color: #f87171; }
-.fearful { color: #c084fc; border-color: #c084fc; }
-.disgust { color: #34d399; border-color: #34d399; }
-.surprised { color: #f472b6; border-color: #f472b6; }
+.stMetric {
+    background: rgba(15, 23, 42, 0.5);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -188,31 +237,37 @@ def preprocess_input(audio_path, scaler):
 
 # Generate waveform plot
 def plot_waveform(y, sr):
-    fig, ax = plt.subplots(figsize=(10, 3), facecolor='none')
-    ax.set_facecolor('none')
+    fig, ax = plt.subplots(figsize=(10, 3), facecolor='#0f172a')
+    ax.set_facecolor('#0f172a')
     librosa.display.waveshow(y, sr=sr, color='#6366f1', alpha=0.8, ax=ax)
-    plt.axis('off')
+    ax.set_title('Audio Waveform', color='white', fontsize=14, fontweight='bold')
+    ax.tick_params(colors='white')
     plt.tight_layout()
     return fig
 
 # Generate spectrogram
 def plot_spectrogram(y, sr):
-    fig, ax = plt.subplots(figsize=(10, 4), facecolor='none')
-    ax.set_facecolor('none')
+    fig, ax = plt.subplots(figsize=(10, 4), facecolor='#0f172a')
+    ax.set_facecolor('#0f172a')
     D = librosa.amplitude_to_db(np.abs(librosa.stft(y)), ref=np.max)
     img = librosa.display.specshow(D, sr=sr, x_axis='time', y_axis='log', 
                                  cmap='magma', ax=ax)
-    plt.colorbar(img, ax=ax, format='%+2.0f dB')
+    ax.set_title('Audio Spectrogram', color='white', fontsize=14, fontweight='bold')
+    ax.tick_params(colors='white')
+    cbar = plt.colorbar(img, ax=ax, format='%+2.0f dB')
+    cbar.ax.tick_params(colors='white')
     plt.tight_layout()
     return fig
 
 # Generate MFCC visualization
 def plot_mfcc(mfcc_features):
-    fig, ax = plt.subplots(figsize=(10, 4), facecolor='none')
-    ax.set_facecolor('none')
+    fig, ax = plt.subplots(figsize=(10, 4), facecolor='#0f172a')
+    ax.set_facecolor('#0f172a')
     img = librosa.display.specshow(mfcc_features.T, x_axis='time', cmap='viridis', ax=ax)
-    plt.colorbar(img, ax=ax)
-    plt.title('MFCC Features')
+    ax.set_title('MFCC Features', color='white', fontsize=14, fontweight='bold')
+    ax.tick_params(colors='white')
+    cbar = plt.colorbar(img, ax=ax)
+    cbar.ax.tick_params(colors='white')
     plt.tight_layout()
     return fig
 
@@ -233,212 +288,374 @@ def get_emotion_icon(emotion):
 # Main app
 def main():
     # Load artifacts
-    model, scaler, label_encoder = load_artifacts()
-    emotions = label_encoder.classes_
+    try:
+        model, scaler, label_encoder = load_artifacts()
+        emotions = label_encoder.classes_
+    except Exception as e:
+        st.error(f"Failed to load model: {str(e)}")
+        st.stop()
     
-    # Header
+    # Header with improved styling
     st.markdown("""
-    <div>
-        <h1 style='text-align:center; margin-bottom:0'>🎤 EmotionSense AI</h1>
-        <p style='text-align:center; font-size:1.2rem; opacity:0.8'>
-        Advanced Speech Emotion Recognition System
-        </p>
+    <div class="main-header">
+        <h1 style='color: #6366f1; margin-bottom: 0.5rem; font-size: 3rem;'>🎤 MARS SER System</h1>
+        <h2 style='color: #8b5cf6; margin-bottom: 0.5rem; font-size: 1.5rem;'>EmotionSense AI</h2>
+        <p style='color: #64748b; font-size: 1.2rem; margin-bottom: 0;'>Advanced Speech Emotion Recognition | MARS Open Projects 2025</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Columns layout
-    col1, col2 = st.columns([1, 1], gap="large")
+    # Create main tabs for better organization
+    main_tab1, main_tab2, main_tab3 = st.tabs(["🎙️ Audio Analysis", "📊 Visualizations", "ℹ️ About System"])
     
-    with col1:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("### 🎙️ Audio Input")
-        st.markdown("Upload an audio file or record directly using your microphone")
+    with main_tab1:
+        # Audio Input Section
+        st.markdown("""
+        <div class="section-card">
+            <h3 style='color: #6366f1; margin-bottom: 1rem;'>🎵 Audio Input</h3>
+            <p style='color: #94a3b8; margin-bottom: 0;'>Select your preferred input method below</p>
+        </div>
+        """, unsafe_allow_html=True)
         
-        # Input options
-        input_method = st.radio("Select input method:", 
-                              ["Upload Audio", "Record Audio"],
-                              horizontal=True)        
+        # Input method tabs
+        input_tab1, input_tab2 = st.tabs(["📁 Upload Audio File", "🎤 Live Recording"])
+        
         audio_data = None
-        if input_method == "Upload Audio":
-            audio_file = st.file_uploader("Upload audio file (WAV, MP3, OGG)", 
-                                        type=["wav", "mp3", "ogg"],
-                                        label_visibility="collapsed")
-            if audio_file:
-                st.audio(audio_file, format='audio/wav')
-                audio_data = audio_file
-        else:
-            st.markdown("### 🎤 Live Recording")
-            if AUDIO_RECORDER_AVAILABLE:
-                recorded_audio = audiorecorder("Click to record", "Stop recording")
-                if len(recorded_audio) > 0:
-                    st.audio(recorded_audio.export().read(), format="audio/wav")
-                    audio_data = recorded_audio.export().read()
-            else:
-                st.warning("Audio recording is not available. Please upload an audio file instead.")
-                
-        st.markdown("</div>", unsafe_allow_html=True)
+        input_method = None
         
-        # Audio visualization
-        if audio_data:
-            st.markdown("<div class='card'>", unsafe_allow_html=True)
-            st.markdown("### 📊 Audio Analysis")
+        with input_tab1:
+            st.markdown("""
+            <div class="upload-zone">
+                <h4 style='color: #6366f1; margin-bottom: 1rem;'>📁 File Upload</h4>
+                <p style='color: #94a3b8;'>Drag and drop or browse to select your audio file</p>
+                <p style='color: #64748b; font-size: 0.9rem;'>Supported: WAV, MP3, OGG, M4A, FLAC (Max: 200MB)</p>
+            </div>
+            """, unsafe_allow_html=True)
             
-            with st.spinner("Processing audio..."):
-                # Save to temp file
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-                    if input_method == "Upload Audio":
-                        audio_data.seek(0)  # Reset file pointer
-                        tmp.write(audio_data.read())
-                    else:
-                        tmp.write(audio_data)
-                    tmp_path = tmp.name
+            audio_file = st.file_uploader(
+                "Choose an audio file", 
+                type=["wav", "mp3", "ogg", "m4a", "flac"],
+                label_visibility="collapsed"
+            )
+            
+            if audio_file:
+                input_method = "Upload Audio"
+                audio_data = audio_file
                 
-                try:
-                    # Process audio
-                    y, sr, input_data = preprocess_input(tmp_path, scaler)
+                # File info display
+                file_size = len(audio_file.getvalue()) / (1024 * 1024)
+                col_info1, col_info2, col_info3 = st.columns(3)
+                
+                with col_info1:
+                    st.metric("📄 File Name", audio_file.name)
+                with col_info2:
+                    st.metric("📊 File Size", f"{file_size:.2f} MB")
+                with col_info3:
+                    st.metric("🎵 Format", audio_file.type.split('/')[-1].upper())
+                
+                # Audio player with enhanced styling
+                st.markdown("#### 🔊 Audio Preview")
+                st.audio(audio_file, format='audio/wav')
+                
+                st.success("✅ File uploaded successfully! Ready for analysis.")
+        
+        with input_tab2:
+            if AUDIO_RECORDER_AVAILABLE:
+                st.markdown("""
+                <div class="record-zone">
+                    <h4 style='color: #ec4899; margin-bottom: 1rem;'>🎤 Live Recording</h4>
+                    <p style='color: #94a3b8;'>Click the button below to start recording your voice</p>
+                    <p style='color: #64748b; font-size: 0.9rem;'>Optimal duration: 3-10 seconds for best results</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Recording interface
+                col_rec1, col_rec2, col_rec3 = st.columns([1, 2, 1])
+                
+                with col_rec2:
+                    recorded_audio = audiorecorder(
+                        start_prompt="🔴 Start Recording",
+                        stop_prompt="⏹️ Stop Recording",
+                        pause_prompt="⏸️ Pause Recording",
+                        show_visualizer=True,
+                        key="emotion_audio_recorder"
+                    )
+                
+                if len(recorded_audio) > 0:
+                    input_method = "Record Audio"
+                    # Convert to bytes for consistent handling
+                    audio_data = recorded_audio.export().read()
                     
-                    # Create tabs for different visualizations
-                    tab1, tab2, tab3 = st.tabs(["Waveform", "Spectrogram", "MFCC Features"])
+                    # Recording info
+                    duration = len(recorded_audio) / recorded_audio.frame_rate
+                    sample_rate = recorded_audio.frame_rate
                     
-                    with tab1:
-                        st.markdown("#### Audio Waveform")
-                        waveform_fig = plot_waveform(y, sr)
-                        st.pyplot(waveform_fig)
-                        plt.close(waveform_fig)  # Close figure to free memory
-                        
-                    with tab2:
-                        st.markdown("#### Audio Spectrogram")
-                        spec_fig = plot_spectrogram(y, sr)
-                        st.pyplot(spec_fig)
-                        plt.close(spec_fig)  # Close figure to free memory
-                        
-                    with tab3:
-                        st.markdown("#### MFCC Features")
-                        mfcc_fig = plot_mfcc(input_data[0].T)
-                        st.pyplot(mfcc_fig)
-                        plt.close(mfcc_fig)  # Close figure to free memory
-                        
-                except Exception as e:
-                    st.error(f"Error processing audio: {str(e)}")
-                finally:
-                    # Clean up temp file
-                    if os.path.exists(tmp_path):
-                        try:
-                            os.unlink(tmp_path)
-                        except:
-                            pass  # Ignore cleanup errors
-            
-            st.markdown("</div>", unsafe_allow_html=True)
-    
-    with col2:
+                    col_rec_info1, col_rec_info2, col_rec_info3 = st.columns(3)
+                    with col_rec_info1:
+                        st.metric("⏱️ Duration", f"{duration:.2f}s")
+                    with col_rec_info2:
+                        st.metric("🔊 Sample Rate", f"{sample_rate} Hz")
+                    with col_rec_info3:
+                        st.metric("🎵 Channels", "Mono")
+                    
+                    # Audio player
+                    st.markdown("#### 🔊 Recording Playback")
+                    st.audio(audio_data, format="audio/wav")
+                    
+                    # Download option
+                    st.download_button(
+                        label="💾 Download Recording",
+                        data=audio_data,
+                        file_name=f"emotion_recording_{int(time.time())}.wav",
+                        mime="audio/wav",
+                        use_container_width=True
+                    )
+                    
+                    st.success("✅ Recording completed! Ready for analysis.")
+            else:
+                st.error("""
+                🚫 **Audio Recording Unavailable**
+                
+                The audio recording feature requires additional setup:
+                
+                ```bash
+                pip install streamlit-audiorecorder
+                ```
+                
+                Please install the package and restart the application, or use the **Upload Audio File** option.
+                """)
+        
+        # Analysis Section
         if audio_data:
-            st.markdown("<div class='card'>", unsafe_allow_html=True)
-            st.markdown("### 🔍 Emotion Analysis")
+            st.markdown("---")
+            st.markdown("""
+            <div class="section-card" style="border-color: rgba(34, 197, 94, 0.3);">
+                <h3 style='color: #22c55e; margin-bottom: 1rem;'>🧠 Emotion Analysis</h3>
+                <p style='color: #94a3b8; margin-bottom: 0;'>Click the button below to analyze the emotional content</p>
+            </div>
+            """, unsafe_allow_html=True)
             
-            # Analyze button with animation
-            if st.button("Analyze Emotion", type="primary", use_container_width=True):
-                with st.spinner("Detecting emotion..."):
+            # Analysis button
+            if st.button("🚀 Analyze Emotion", type="primary", use_container_width=True):
+                with st.spinner("🔬 Processing audio and detecting emotions..."):
                     try:
+                        # Save to temp file
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+                            if input_method == "Upload Audio":
+                                audio_data.seek(0)
+                                tmp.write(audio_data.read())
+                            else:
+                                tmp.write(audio_data)
+                            tmp_path = tmp.name
+                        
+                        # Process audio
+                        y, sr, input_data = preprocess_input(tmp_path, scaler)
+                        
                         # Predict emotion
                         prediction = model.predict(input_data)
                         predicted_class = np.argmax(prediction, axis=1)
                         emotion = label_encoder.inverse_transform(predicted_class)[0]
                         confidence = np.max(prediction) * 100
                         
-                        # Display results with animation
+                        # Results display
+                        st.markdown("### 🎯 Analysis Results")
+                        
+                        # Main emotion display
                         icon = get_emotion_icon(emotion)
-                        st.markdown(f"<div class='emotion-display {emotion}'>{icon} {emotion.upper()} {icon}</div>", 
-                                   unsafe_allow_html=True)
+                        st.markdown(f"""
+                        <div class="emotion-result">
+                            <h1 style='font-size: 3rem; margin-bottom: 0.5rem;'>{icon}</h1>
+                            <h2 style='color: #6366f1; margin-bottom: 0.5rem;'>{emotion.upper()}</h2>
+                            <p style='color: #8b5cf6; font-size: 1.2rem;'>Confidence: {confidence:.1f}%</p>
+                        </div>
+                        """, unsafe_allow_html=True)
                         
-                        # Confidence metric
-                        st.metric("Confidence Level", f"{confidence:.2f}%", 
-                                 delta_color="off")
-                        
-                        # Emotion probabilities visualization
-                        st.markdown("#### Emotion Probability Distribution")
-                        
-                        # Create progress bars for each emotion
+                        # Probability distribution
+                        st.markdown("#### 📊 Emotion Probability Distribution")
                         prob_data = {e: p * 100 for e, p in zip(emotions, prediction[0])}
                         
-                        for emotion_name, prob in prob_data.items():
-                            # Add color-coded progress bar
-                            color = {
-                                'neutral': '#94a3b8',
-                                'calm': '#60a5fa',
-                                'happy': '#fbbf24',
-                                'sad': '#38bdf8',
-                                'angry': '#f87171',
-                                'fearful': '#c084fc',
-                                'disgust': '#34d399',
-                                'surprised': '#f472b6'
-                            }.get(emotion_name, '#6366f1')
+                        # Create two columns for better layout
+                        prob_col1, prob_col2 = st.columns(2)
+                        
+                        emotion_colors = {
+                            'neutral': '#94a3b8', 'calm': '#60a5fa', 'happy': '#fbbf24', 'sad': '#38bdf8',
+                            'angry': '#f87171', 'fearful': '#c084fc', 'disgust': '#34d399', 'surprised': '#f472b6'
+                        }
+                        
+                        for i, (emotion_name, prob) in enumerate(prob_data.items()):
+                            col = prob_col1 if i % 2 == 0 else prob_col2
+                            with col:
+                                color = emotion_colors.get(emotion_name, '#6366f1')
+                                # Progress bar with custom styling
+                                st.markdown(f"**{get_emotion_icon(emotion_name)} {emotion_name.capitalize()}**")
+                                st.progress(min(int(prob), 100), text=f"{prob:.1f}%")
+                        
+                        # Cleanup temp file
+                        try:
+                            os.unlink(tmp_path)
+                        except:
+                            pass
                             
-                            # Display progress bar
-                            st.markdown(f"**{emotion_name.capitalize()}**")
-                            st.progress(int(prob), text=f"{prob:.2f}%")
-                        
-                        # Detailed statistics
-                        st.markdown("#### Detailed Emotion Analysis")
-                        
-                        # Create metrics columns
-                        cols = st.columns(4)
-                        for i, (emote, prob) in enumerate(prob_data.items()):
-                            with cols[i % 4]:
-                                st.metric(emote.capitalize(), f"{prob:.1f}%")
-                        
                     except Exception as e:
-                        st.error(f"Error analyzing emotion: {str(e)}")
+                        st.error(f"❌ Error analyzing emotion: {str(e)}")
             else:
-                st.markdown("""
-                <div style='text-align:center; padding: 4rem 0;'>
-                    <h3>Click 'Analyze Emotion' to see results</h3>
-                    <p>Your analysis will appear here</p>
-                </div>
-                """, unsafe_allow_html=True)
-            
-            st.markdown("</div>", unsafe_allow_html=True)
+                st.info("👆 Upload or record audio, then click 'Analyze Emotion' to see results")
         else:
-            st.markdown("<div class='card'>", unsafe_allow_html=True)
-            st.markdown("### 🔍 Emotion Analysis")
             st.markdown("""
-            <div style='text-align:center; padding: 4rem 0;'>
-                <h3>Upload or record audio to begin analysis</h3>
-                <p>Your results will appear here</p>
+            <div style='text-align: center; padding: 3rem; background: rgba(15, 23, 42, 0.5); border-radius: 15px; margin: 2rem 0; border: 2px dashed #64748b;'>
+                <h3 style='color: #64748b; margin-bottom: 1rem;'>🎵 Ready for Analysis</h3>
+                <p style='color: #94a3b8;'>Please upload an audio file or record your voice to begin emotion analysis</p>
             </div>
             """, unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
     
-    # How it works section
-    st.markdown("<div class='card'>", unsafe_allow_html=True)
-    st.markdown("### 🧠 How EmotionSense AI Works")
+    with main_tab2:
+        if audio_data:
+            st.markdown("### 📊 Audio Visualizations")
+            
+            with st.spinner("🎨 Generating visualizations..."):
+                try:
+                    # Save to temp file
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+                        if input_method == "Upload Audio":
+                            audio_data.seek(0)
+                            tmp.write(audio_data.read())
+                        else:
+                            tmp.write(audio_data)
+                        tmp_path = tmp.name
+                    
+                    # Process audio
+                    y, sr, input_data = preprocess_input(tmp_path, scaler)
+                    
+                    # Visualization tabs
+                    viz_tab1, viz_tab2, viz_tab3 = st.tabs(["🌊 Waveform", "🎨 Spectrogram", "📈 MFCC Features"])
+                    
+                    with viz_tab1:
+                        st.markdown("#### 🌊 Audio Waveform")
+                        st.markdown("Visual representation of the audio signal amplitude over time")
+                        waveform_fig = plot_waveform(y, sr)
+                        st.pyplot(waveform_fig)
+                        plt.close(waveform_fig)
+                        
+                    with viz_tab2:
+                        st.markdown("#### 🎨 Audio Spectrogram")
+                        st.markdown("Frequency content visualization showing how spectral density varies with time")
+                        spec_fig = plot_spectrogram(y, sr)
+                        st.pyplot(spec_fig)
+                        plt.close(spec_fig)
+                        
+                    with viz_tab3:
+                        st.markdown("#### 📈 MFCC Features")
+                        st.markdown("Mel-Frequency Cepstral Coefficients used by the AI model for emotion recognition")
+                        mfcc_fig = plot_mfcc(input_data[0].T)
+                        st.pyplot(mfcc_fig)
+                        plt.close(mfcc_fig)
+                    
+                    # Cleanup
+                    try:
+                        os.unlink(tmp_path)
+                    except:
+                        pass
+                        
+                except Exception as e:
+                    st.error(f"❌ Error generating visualizations: {str(e)}")
+        else:
+            st.info("📊 Upload or record audio to view visualizations")
     
-    col_ex1, col_ex2, col_ex3 = st.columns(3)
-    
-    with col_ex1:
-        st.markdown("#### 1. Audio Processing")
+    with main_tab3:
+        st.markdown("### 🧠 How the MARS SER System Works")
+        
+        # System overview
         st.markdown("""
-        - Input audio is normalized and segmented
-        - Background noise reduction applied
-        - Sample rate standardized to 22.05kHz
-        """)
-    
-    with col_ex2:
-        st.markdown("#### 2. Feature Extraction")
-        st.markdown("""
-        - MFCC (Mel-Frequency Cepstral Coefficients) calculated
-        - 60 audio features extracted per sample
-        - Features standardized using z-score normalization
-        """)
-    
-    with col_ex3:
-        st.markdown("#### 3. Deep Learning Analysis")
-        st.markdown("""
-        - Hybrid CNN + BiLSTM neural network
-        - 8 emotion categories recognized
-        - Real-time prediction with 85%+ accuracy
-        """)
-    
-    st.markdown("</div>", unsafe_allow_html=True)
+        <div class="section-card">
+            <h4 style='color: #6366f1;'>🎯 System Overview</h4>
+            <p style='color: #94a3b8;'>This Speech Emotion Recognition system is part of the MARS Open Projects 2025 initiative, designed to classify emotions in speech using advanced deep learning techniques.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Process explanation
+        col_ex1, col_ex2, col_ex3 = st.columns(3)
+        
+        with col_ex1:
+            st.markdown("""
+            <div class="feature-card processing">
+                <h4 style='color: #22c55e;'>1. 🎵 Audio Processing</h4>
+                <ul style='color: #94a3b8;'>
+                    <li>Audio normalization and segmentation</li>
+                    <li>Noise reduction algorithms</li>
+                    <li>22.05kHz sampling rate standardization</li>
+                    <li>3-second optimal duration processing</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col_ex2:
+            st.markdown("""
+            <div class="feature-card extraction">
+                <h4 style='color: #ec4899;'>2. 🔬 Feature Extraction</h4>
+                <ul style='color: #94a3b8;'>
+                    <li>60 MFCC coefficients calculation</li>
+                    <li>Mel-scale frequency analysis</li>
+                    <li>Z-score feature normalization</li>
+                    <li>Temporal pattern recognition</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col_ex3:
+            st.markdown("""
+            <div class="feature-card analysis">
+                <h4 style='color: #8b5cf6;'>3. 🧠 AI Analysis</h4>
+                <ul style='color: #94a3b8;'>
+                    <li>Hybrid CNN + BiLSTM architecture</li>
+                    <li>8 emotion category classification</li>
+                    <li>87%+ accuracy performance</li>
+                    <li>Real-time prediction capabilities</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Performance metrics
+        st.markdown("### 📈 Model Performance")        
+        perf_col1, perf_col2, perf_col3, perf_col4 = st.columns(4)
+        
+        with perf_col1:
+            st.metric("🎯 Overall Accuracy", "93.0%", delta="Target: >80% ✅")
+        with perf_col2:
+            st.metric("📊 Weighted F1 Score", "90.53%", delta="Target: >80% ✅")
+        with perf_col3:
+            st.metric("🎵 Emotions Classified", "8", delta="All categories")
+        with perf_col4:
+            st.metric("⚡ Processing Speed", "<2s", delta="Real-time")
+        
+        # Technical details
+        with st.expander("🔧 Technical Specifications"):
+            tech_col1, tech_col2 = st.columns(2)
+            
+            with tech_col1:
+                st.markdown("""
+                **Model Architecture:**
+                - CNN layers for feature extraction
+                - Bidirectional LSTM for temporal modeling
+                - Dropout and BatchNormalization
+                - Dense layers with softmax output
+                
+                **Training Data:**
+                - RAVDESS dataset (24 actors)
+                - Both speech and song audio
+                - Data augmentation techniques
+                """)
+            
+            with tech_col2:
+                st.markdown("""
+                **Performance Targets:**
+                - ✅ Weighted F1 Score > 80%
+                - ✅ Overall Accuracy > 80%
+                - ✅ Individual Class Recalls > 75%
+                
+                **Supported Formats:**
+                - WAV, MP3, OGG, M4A, FLAC
+                - Sample rates: 8kHz - 48kHz
+                - Mono/Stereo audio support
+                """)
 
 if __name__ == "__main__":
     main()

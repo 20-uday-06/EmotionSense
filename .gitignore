@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Audio files (exclude large datasets)
+*.zip
+Audio_Song_Actors_01-24/
+Audio_Speech_Actors_01-24/
+*.wav
+
+# Development files
+*_old.py
+*_new.py
+full*.py
+gpt*.ipynb
+perp*.ipynb
+preplexity*.ipynb
+final_code.ipynb
+
+# Documentation
+*.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml

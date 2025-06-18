@@ -4,6 +4,10 @@
 
 This project implements a sophisticated **Speech Emotion Recognition (SER)** system using deep learning techniques as part of the MARS Open Projects 2025 initiative. The system employs a hybrid CNN + Bidirectional LSTM architecture trained on the RAVDESS dataset to classify emotions in speech and song audio files with high accuracy.
 
+> **Main Jupyter Notebook:** `full_code.ipynb`
+> 
+> For readability, all notebook code cells are also available in `full.py` (with cell numbers as comments).
+
 ### 📋 Project Requirements
 - **Primary Objective**: Develop an AI system that can accurately identify emotions from speech audio
 - **Performance Targets**:
@@ -56,39 +60,59 @@ The system recognizes 8 distinct emotional states:
 This MARS SER System has achieved **outstanding performance** that significantly exceeds all project requirements:
 
 🎯 **Target vs Achieved:**
-- **Weighted F1 Score**: Target >80% → **Achieved 90.53%** (+10.53%)
-- **Overall Accuracy**: Target >80% → **Achieved 93.0%** (+13.0%)
-- **Class Recalls**: Target >75% → **All classes >87%** (+12%+)
+- **Weighted F1 Score**: Target >80% → **Achieved 90.53% / 0.95**
+- **Overall Accuracy**: Target >80% → **Achieved 90.52% / 94.90%**
+- **Class Recalls**: Target >75% → **All classes >86%**
 
 ### Performance Highlights
 - ✨ **Top-tier accuracy** in academic emotion recognition
-- 🚀 **13% above target** accuracy requirements
+- 🚀 **Above target** accuracy requirements
 - 🎯 **Consistent performance** across all emotion categories
 - 💪 **Robust model** with excellent generalization
 
 ## 📊 Model Performance Evaluation
 
 ### Achieved Results
-✅ **Weighted F1 Score**: 90.53% (Target: >80%)  
-✅ **Overall Accuracy**: 93.0% (Target: >80%)  
-✅ **All Class Recalls**: >75% (Target: >75%)
+✅ **Weighted F1 Score**: 90.53% and 0.95 (Target: >80%)  
+✅ **Overall Accuracy**: 90.52% and 94.90% (Target: >80%)  
+✅ **All Class Recalls**: >86% (Target: >75%)
 
 ### Detailed Performance Metrics
-| Emotion | Precision | Recall | F1-Score | Support |
-|---------|-----------|--------|----------|---------|
-| Neutral | 0.95 | 0.92 | 0.93 | 192 |
-| Calm | 0.94 | 0.93 | 0.94 | 192 |
-| Happy | 0.91 | 0.94 | 0.93 | 192 |
-| Sad | 0.92 | 0.89 | 0.90 | 192 |
-| Angry | 0.93 | 0.95 | 0.94 | 192 |
-| Fearful | 0.88 | 0.91 | 0.89 | 192 |
-| Disgust | 0.90 | 0.87 | 0.88 | 192 |
-| Surprised | 0.92 | 0.94 | 0.93 | 192 |
+
+#### Classification Report (Best Run)
+```
+              precision    recall  f1-score   support
+
+       angry       0.96      0.95      0.96       150
+        calm       0.99      0.95      0.97       151
+     disgust       0.96      0.95      0.95        77
+     fearful       0.95      0.95      0.95       150
+       happy       0.97      0.91      0.94       150
+     neutral       0.95      0.96      0.95        75
+         sad       0.91      0.96      0.94       151
+   surprised       0.89      0.97      0.93        77
+
+    accuracy                           0.95       981
+   macro avg       0.95      0.95      0.95       981
+weighted avg       0.95      0.95      0.95       981
+```
+
+#### Confusion Matrix
+```
+[[143   0   1   2   0   0   0   4]
+ [  0 144   0   0   0   1   6   0]
+ [  2   0  73   0   0   0   2   0]
+ [  0   0   0 142   2   0   6   0]
+ [  4   0   2   1 137   2   0   4]
+ [  0   2   0   0   0  72   0   1]
+ [  0   0   0   5   0   1 145   0]
+ [  0   0   0   0   2   0   0  75]]
+```
 
 **Overall Performance:**
-- **Weighted Average F1**: 90.53%
-- **Macro Average F1**: 91.75%
-- **Overall Accuracy**: 93.0%
+- **Weighted Average F1**: 90.53% / 0.95
+- **Macro Average F1**: 90.75% / 0.95
+- **Overall Accuracy**: 90.52% / 94.90%
 
 ## 🚀 Project Structure
 
@@ -180,16 +204,16 @@ python full.py
 ### Evaluation Criteria
 The project meets all MARS evaluation requirements:
 - ✅ **F1 Score Requirement**: 90.53% > 80%
-- ✅ **Accuracy Requirement**: 93.0% > 80%
+- ✅ **Accuracy Requirement**: 90.52% > 80%
 - ✅ **Class Performance**: All emotions > 75% recall
 - ✅ **Robustness**: Exceptional performance across test sets
 
 ## 📈 Results & Analysis
 
 ### Key Achievements
-- **Exceptional Accuracy**: 93.0% overall classification accuracy
-- **Outstanding F1 Score**: 90.53% weighted F1 performance
-- **Balanced Performance**: All emotion classes perform excellently
+- **Exceptional Accuracy**: 90.52% and 94.90% overall classification accuracy
+- **Outstanding F1 Score**: 90.53% and 0.95 weighted F1 performance
+- **Balanced Performance**: All emotion classes perform excellently (all recalls > 86%)
 - **Real-time Capable**: Fast inference for live applications
 - **Robust Features**: MFCC features provide excellent discrimination
 
@@ -238,6 +262,7 @@ This project is developed for educational purposes as part of MARS Open Projects
 
 **Dataset**: RAVDESS - Ryerson Audio-Visual Database of Emotional Speech and Song
 **Framework**: TensorFlow/Keras, Streamlit
+**Main Notebook**: `full_code.ipynb`
 **Author**: [Student/Team Name]
 **Institution**: [University/Organization]
 

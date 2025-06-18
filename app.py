@@ -367,9 +367,11 @@ def main():
             <p style='color: #94a3b8; margin-bottom: 0;'>Select your preferred input method below</p>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Input method tabs
-        input_tab1, input_tab2 = st.tabs(["📁 Upload Audio File", "🎤 Live Recording"])
+          # Input method tabs - Upload is primary method for deployment
+        if AUDIO_RECORDER_AVAILABLE:
+            input_tab1, input_tab2 = st.tabs(["📁 Upload Audio File", "🎤 Live Recording"])
+        else:
+            input_tab1, input_tab2 = st.tabs(["📁 Upload Audio File", "🎤 Live Recording (Unavailable)"])
         
         audio_data = None
         input_method = None
@@ -406,8 +408,7 @@ def main():
                 
                 # Audio player with enhanced styling
                 st.markdown("#### 🔊 Audio Preview")
-                st.audio(audio_file, format='audio/wav')
-                
+                st.audio(audio_file, format='audio/wav')                
                 st.success("✅ File uploaded successfully! Ready for analysis.")
         
         with input_tab2:
@@ -464,17 +465,19 @@ def main():
                     
                     st.success("✅ Recording completed! Ready for analysis.")
             else:
-                st.error("""
-                🚫 **Audio Recording Unavailable**
-                
-                The audio recording feature requires additional setup:
-                
-                ```bash
-                pip install streamlit-audiorecorder
-                ```
-                
-                Please install the package and restart the application, or use the **Upload Audio File** option.
-                """)
+                st.markdown("""
+                <div class="section-card" style="text-align: center; padding: 3rem; border: 2px dashed #64748b;">
+                    <h4 style='color: #f59e0b; margin-bottom: 1rem;'>🎤 Live Recording</h4>
+                    <p style='color: #94a3b8; margin-bottom: 1.5rem;'>Live recording is not available in this deployment environment</p>
+                    <div style='background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1rem 0; border: 1px solid rgba(245, 158, 11, 0.3);'>
+                        <h5 style='color: #f59e0b; margin-bottom: 1rem;'>💡 Alternative Options:</h5>
+                        <p style='color: #94a3b8; margin-bottom: 0.5rem;'>• Use the <strong>Upload Audio File</strong> tab above</p>
+                        <p style='color: #94a3b8; margin-bottom: 0.5rem;'>• Record audio on your device and upload the file</p>
+                        <p style='color: #94a3b8; margin-bottom: 0;'>• Supported formats: WAV, MP3, M4A</p>
+                    </div>
+                    <p style='color: #64748b; font-size: 0.9rem; margin-top: 1rem;'>For local development with recording capabilities, install: <code style='background: rgba(15, 23, 42, 0.8); padding: 0.2rem 0.5rem; border-radius: 4px;'>pip install streamlit-audiorecorder</code></p>
+                </div>
+                """, unsafe_allow_html=True)
         
         # Analysis Section
         if audio_data:

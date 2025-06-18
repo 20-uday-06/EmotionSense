@@ -215,24 +215,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Check TensorFlow version compatibility
-def check_tensorflow_version():
-    """Check and display TensorFlow version information"""
-    try:
-        tf_version = tf.__version__
-        st.info(f"🔍 TensorFlow version: {tf_version}")
-        
-        # Check for known problematic versions
-        if tf_version.startswith("2.13") or tf_version.startswith("2.14") or tf_version.startswith("2.15"):
-            st.warning("⚠️ You're using a TensorFlow version that may have batch_shape compatibility issues.")
-            st.info("Consider updating to TensorFlow 2.16.0 or later")
-        else:
-            st.success("✅ TensorFlow version should be compatible")
-            
-        return tf_version
-    except Exception as e:
-        st.error(f"Could not check TensorFlow version: {e}")
-        return None
+
 
 # Alternative model loading function for compatibility issues
 def load_model_alternative(model_path):
@@ -251,49 +234,35 @@ def load_model_alternative(model_path):
 # Load artifacts
 @st.cache_resource
 def load_artifacts():
-    model = None
-    
-    # Try multiple loading methods
-    loading_methods = [
-        ("Standard .keras loading", lambda: load_model('model/emotion_model.keras', compile=False)),
-        ("Alternative .keras loading", lambda: load_model_alternative('model/emotion_model.keras')),
-        ("Standard .h5 loading", lambda: load_model('model/emotion_model.h5', compile=False)),
-        ("Alternative .h5 loading", lambda: load_model_alternative('model/emotion_model.h5')),
-    ]
-    
-    for method_name, loading_func in loading_methods:
-        try:
-            st.info(f"Trying {method_name}...")
-            model = loading_func()
-            if model is not None:
-                # Recompile with a standard loss function
-                model.compile(
-                    optimizer='adam',
-                    loss='categorical_crossentropy',
-                    metrics=['accuracy']
-                )
-                st.success(f"✅ Model loaded successfully using {method_name}")
-                break
-        except Exception as e:
-            st.warning(f"❌ {method_name} failed: {str(e)[:100]}...")
-            continue
-    
-    if model is None:
-        st.error("❌ All model loading methods failed!")
-        st.error("This appears to be a TensorFlow version compatibility issue.")
-        st.info("💡 Suggested solutions:")
-        st.info("1. Update TensorFlow version in requirements.txt to 2.16.0 or later")
-        st.info("2. Retrain the model with the deployment TensorFlow version")
-        st.info("3. Check that Python version matches between local and deployment")
-        st.stop()
-    
     try:
-        scaler = joblib.load('model/scaler.pkl')
-        label_encoder = joblib.load('model/label_encoder.pkl')
-        st.success("✅ Preprocessing artifacts loaded successfully")
-    except Exception as e:
-        st.error(f"❌ Could not load preprocessing artifacts: {e}")
-        st.stop()
+        # Try loading the .keras format first
+        model = load_model('model/emotion_model.keras', compile=False)
+    except Exception:
+        try:
+            # Fallback to alternative loading method
+            model = load_model_alternative('model/emotion_model.keras')
+        except Exception:
+            try:
+                # Try .h5 format
+                model = load_model('model/emotion_model.h5', compile=False)
+            except Exception:
+                try:
+                    # Final fallback
+                    model = load_model_alternative('model/emotion_model.h5')
+                except Exception as e:
+                    st.error(f"❌ Could not load model: {str(e)}")
+                    st.stop()
+    
+    # Recompile the model
+    model.compile(
+        optimizer='adam',
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
+    )
+    
+    # Load preprocessing artifacts
+    scaler = joblib.load('model/scaler.pkl')
+    label_encoder = joblib.load('model/label_encoder.pkl')
     
     return model, scaler, label_encoder
 
@@ -370,10 +339,6 @@ def get_emotion_icon(emotion):
 
 # Main app
 def main():
-    # Check TensorFlow version first
-    if TENSORFLOW_AVAILABLE:
-        tf_version = check_tensorflow_version()
-    
     # Load artifacts
     try:
         model, scaler, label_encoder = load_artifacts()

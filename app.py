@@ -367,7 +367,7 @@ def main():
             <p style='color: #94a3b8; margin-bottom: 0;'>Select your preferred input method below</p>
         </div>
         """, unsafe_allow_html=True)        # Input method tabs - both methods work universally
-        input_tab1, input_tab2 = st.tabs(["📁 Upload Audio File", ])
+        input_tab1, input_tab2 = st.tabs(["📁 Upload Audio File", "🎤 Live Recording"])
         
         audio_data = None
         input_method = None

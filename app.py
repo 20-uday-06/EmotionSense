@@ -218,32 +218,60 @@ st.markdown("""
 # Load artifacts
 @st.cache_resource
 def load_artifacts():
+    model = None
+    
+    # Method 1: Try H5 format first (usually most compatible)
     try:
-        # Try loading the .keras format first (more reliable)
-        model = load_model('model/emotion_model.keras', compile=False)
-        # Recompile with a standard loss function
+        model = load_model('model/emotion_model.h5', compile=False)
         model.compile(
             optimizer='adam',
             loss='categorical_crossentropy',
             metrics=['accuracy']
         )
+        st.success("✅ Model loaded successfully from .h5 format")
     except Exception as e:
-        st.warning(f"Could not load .keras model: {e}")
+        st.warning(f"Could not load .h5 model: {e}")
+        
+        # Method 2: Try Keras format with safe loading
         try:
-            # Fallback to .h5 format without custom objects
-            model = load_model('model/emotion_model.h5', compile=False)
-            # Recompile with a standard loss function
+            # Use safe loading to handle version compatibility
+            model = tf.keras.models.load_model('model/emotion_model.keras', compile=False, safe_mode=False)
             model.compile(
                 optimizer='adam',
                 loss='categorical_crossentropy',
                 metrics=['accuracy']
             )
+            st.success("✅ Model loaded successfully from .keras format")
         except Exception as e2:
-            st.error(f"Could not load model: {e2}")
-            st.stop()
+            st.warning(f"Could not load .keras model with safe_mode=False: {e2}")
+            
+            # Method 3: Try with custom object scope
+            try:
+                with tf.keras.utils.custom_object_scope({}):
+                    model = tf.keras.models.load_model('model/emotion_model.keras', compile=False)
+                model.compile(
+                    optimizer='adam',
+                    loss='categorical_crossentropy',
+                    metrics=['accuracy']
+                )
+                st.success("✅ Model loaded successfully with custom object scope")
+            except Exception as e3:
+                st.error(f"❌ All model loading methods failed:")
+                st.error(f"• H5 error: {e}")
+                st.error(f"• Keras safe_mode error: {e2}")
+                st.error(f"• Custom scope error: {e3}")
+                st.error("Model files may be incompatible with current TensorFlow version.")
+                st.stop()
     
-    scaler = joblib.load('model/scaler.pkl')
-    label_encoder = joblib.load('model/label_encoder.pkl')
+    # Load preprocessing artifacts
+    try:
+        scaler = joblib.load('model/scaler.pkl')
+        label_encoder = joblib.load('model/label_encoder.pkl')
+        st.success("✅ Preprocessing artifacts loaded successfully")
+    except Exception as e:
+        st.error(f"❌ Could not load preprocessing artifacts: {e}")
+        st.stop()
+        
     return model, scaler, label_encoder
 
 # Feature extraction function

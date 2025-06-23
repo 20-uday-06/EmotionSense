@@ -5,8 +5,6 @@
 This project implements a sophisticated **Speech Emotion Recognition (SER)** system using deep learning techniques as part of the MARS Open Projects 2025 initiative. The system employs a hybrid CNN + Bidirectional LSTM architecture trained on the RAVDESS dataset to classify emotions in speech and song audio files with high accuracy.
 
 > **Main Jupyter Notebook:** `new_correct_code.ipynb`
-> 
-> For readability, all notebook code cells are also available in `read.py` (with cell numbers as comments).
 
 ### 📋 Project Requirements
 - **Primary Objective**: Develop an AI system that can accurately identify emotions from speech audio
@@ -132,7 +130,6 @@ weighted avg       0.83      0.83      0.83       491
 ```
 Mars/
 ├── app.py                          # Streamlit web application
-├── read.py                         # Complete training pipeline (readable format)
 ├── new_correct_code.ipynb         # Main Jupyter notebook with training code
 ├── requirements.txt                # Python dependencies
 ├── README.md                       # Project documentation
@@ -195,10 +192,7 @@ streamlit-audiorecorder>=0.0.1
 
 ### Training Pipeline
 ```bash
-# Run complete training pipeline (readable Python script)
-python read.py
-
-# Or use the Jupyter notebook for interactive development
+# Use the Jupyter notebook for interactive development
 jupyter notebook new_correct_code.ipynb
 ```
 
@@ -288,7 +282,6 @@ This project is developed for educational purposes as part of MARS Open Projects
 **Dataset**: RAVDESS - Ryerson Audio-Visual Database of Emotional Speech and Song
 **Framework**: TensorFlow/Keras, Streamlit
 **Main Notebook**: `new_correct_code.ipynb`
-**Readable Code**: `read.py`
 **Author**: [Student/Team Name]
 **Institution**: [University/Organization]
 

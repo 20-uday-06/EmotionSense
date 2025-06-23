@@ -688,39 +688,36 @@ def main():
             """, unsafe_allow_html=True)
         
         with col_ex2:
-            st.markdown("""
-            <div class="feature-card extraction">
+            st.markdown("""            <div class="feature-card extraction">
                 <h4 style='color: #ec4899;'>2. 🔬 Feature Extraction</h4>
                 <ul style='color: #94a3b8;'>
-                    <li>60 MFCC coefficients calculation</li>
+                    <li>60 MFCC coefficients, 130 time steps</li>
                     <li>Mel-scale frequency analysis</li>
-                    <li>Z-score feature normalization</li>
-                    <li>Temporal pattern recognition</li>
+                    <li>StandardScaler normalization</li>
+                    <li>Enhanced temporal pattern recognition</li>
                 </ul>
             </div>
             """, unsafe_allow_html=True)
         
         with col_ex3:
-            st.markdown("""
-            <div class="feature-card analysis">
+            st.markdown("""            <div class="feature-card analysis">
                 <h4 style='color: #8b5cf6;'>3. 🧠 AI Analysis</h4>
                 <ul style='color: #94a3b8;'>
-                    <li>Hybrid CNN + BiLSTM architecture</li>
+                    <li>Enhanced CNN + BiLSTM with Attention</li>
                     <li>8 emotion category classification</li>
-                    <li>87%+ accuracy performance</li>
+                    <li>82.69% accuracy performance</li>
                     <li>Real-time prediction capabilities</li>
                 </ul>
             </div>
             """, unsafe_allow_html=True)
-        
-        # Performance metrics
+          # Performance metrics
         st.markdown("### 📈 Model Performance")        
         perf_col1, perf_col2, perf_col3, perf_col4 = st.columns(4)
         
         with perf_col1:
-            st.metric("🎯 Overall Accuracy", "93.0%", delta="Target: >80% ✅")
+            st.metric("🎯 Overall Accuracy", "82.69%", delta="Target: >80% ✅")
         with perf_col2:
-            st.metric("📊 Weighted F1 Score", "90.53%", delta="Target: >80% ✅")
+            st.metric("📊 Weighted F1 Score", "82.59%", delta="Target: >80% ✅")
         with perf_col3:
             st.metric("🎵 Emotions Classified", "8", delta="All categories")
         with perf_col4:
@@ -731,25 +728,26 @@ def main():
             tech_col1, tech_col2 = st.columns(2)
             
             with tech_col1:
-                st.markdown("""
-                **Model Architecture:**
-                - CNN layers for feature extraction
-                - Bidirectional LSTM for temporal modeling
-                - Dropout and BatchNormalization
+                st.markdown("""                **Model Architecture:**
+                - Enhanced CNN + BiLSTM with Attention
+                - SpatialDropout1D and LayerNormalization
+                - L2 regularization and BatchNormalization
                 - Dense layers with softmax output
                 
                 **Training Data:**
                 - RAVDESS dataset (24 actors)
                 - Both speech and song audio
-                - Data augmentation techniques
+                - Advanced data augmentation (noise, time shift, spectral)
+                - Early stopping at epoch 49
                 """)
             
             with tech_col2:
-                st.markdown("""
-                **Performance Targets:**
-                - ✅ Weighted F1 Score > 80%
-                - ✅ Overall Accuracy > 80%
-                - ✅ Individual Class Recalls > 75%
+                st.markdown("""                **Performance Targets:**
+                - ✅ Weighted F1 Score: 82.59% (>80%)
+                - ✅ Overall Accuracy: 82.69% (>80%)
+                - ✅ Test Precision: 84.50%
+                - ✅ Test Recall: 81.06%
+                - ✅ Macro F1 Score: 82.46%
                 
                 **Supported Formats:**
                 - WAV, MP3, OGG, M4A, FLAC
